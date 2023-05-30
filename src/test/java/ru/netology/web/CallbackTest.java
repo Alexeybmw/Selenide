@@ -1,22 +1,44 @@
 package ru.netology.web;
 
-import com.codeborne.selenide.SelenideElement;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Condition.exactText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selectors.withText;
+import static com.codeborne.selenide.Selenide.*;
 
 class CallbackTest {
+    public String generateDate(int days, String pattern) {
+        if (days == 0) {
+            return LocalDate.now().format(DateTimeFormatter.ofPattern(pattern));
+        }
+        return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern(pattern));
+    }
+
     @Test
     void shouldTest() {
         open("http://localhost:9999");
-        SelenideElement form = $("[data-test-id=callback-form]");
-        form.$("[data-test-id=name] input").setValue("Василий");
-        form.$("[data-test-id=phone] input").setValue("+79270000000");
-        form.$("[data-test-id=agreement]").click();
-        form.$("[data-test-id=submit]").click();
-        $(".alert-success").shouldHave(exactText("Ваша заявка успешно отправлена!"));
+        $("[data-test-id='city'] .input__control").setValue("Симферополь");
+        $("[data-test-id='date'] .input__control").click();
+        $("[data-test-id='date'] .input__control").clear();
+        String dateForReservation = generateDate(3, "dd.MM.yyyy");
+        $("[data-test-id='date'] .input__control").setValue(dateForReservation);
+        $("[data-test-id='name'] .input__control").setValue("Волков Василий");
+        $(" [name='phone']").setValue("+79260911212");
+        $("[data-test-id='agreement'] .checkbox__box").click();
+        $(withText("Забронировать")).click();
+        $(By.cssSelector(".notification__content")).shouldHave(exactText("Встреча успешно забронирована на " + dateForReservation), Duration.ofMillis(15000)).shouldBe(visible);
     }
+
 }
+
+
+
 

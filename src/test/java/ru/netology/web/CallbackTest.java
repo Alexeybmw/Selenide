@@ -27,14 +27,14 @@ class CallbackTest {
         open("http://localhost:9999");
         $("[data-test-id='city'] .input__control").setValue("Симферополь");
         $("[data-test-id='date'] .input__control").click();
-        $("[data-test-id='date'] .input__control").clear();
-        String dateForReservation = generateDate(3, "dd.MM.yyyy");
-        $("[data-test-id='date'] .input__control").setValue(dateForReservation);
+        $("[data-test-id='date'] .input__control").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME),Keys.BACK_SPACE);
+        String planningDate = generateDate(3, "dd.MM.yyyy");
+        $("[data-test-id='date'] .input__control").setValue(planningDate);
         $("[data-test-id='name'] .input__control").setValue("Волков Василий");
         $(" [name='phone']").setValue("+79260911212");
         $("[data-test-id='agreement'] .checkbox__box").click();
         $(withText("Забронировать")).click();
-        $(By.cssSelector(".notification__content")).shouldHave(exactText("Встреча успешно забронирована на " + dateForReservation), Duration.ofMillis(15000)).shouldBe(visible);
+        $(By.cssSelector(".notification__content")).shouldHave(exactText("Встреча успешно забронирована на " + planningDate), Duration.ofMillis(15000)).shouldBe(visible);
     }
 
 }
